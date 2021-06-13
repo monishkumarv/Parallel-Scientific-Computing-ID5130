@@ -1,0 +1,26 @@
+Normal MPI compiler commands:
+>> gcc -I "C:\Program Files (x86)\Microsoft SDKs\MPI\Include" program_hello_mpi.c "C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64\msmpi.lib"
+Normal MPI Run commands:
+>> mpiexec -n 4 a.exe
+
+
+Change coderunner to Normal <---> MPI execution:
+1. Goto settings
+2. Search code runner
+3. 'Code-runner: Executor Map' option and select 'Edit in settings.json'
+4. In the JSON file...comment the unrequired 'c' and 'cpp' commands and uncomment the required commands...
+
+
+
+
+---------------------------------------- Coderunner ----------------------------------------
+
+// Normal competitve coding commands...
+"c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+"cpp": "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+        
+// MPI compile commands...You have to run the executable file by running  >> mpiexec -n <no.of proccess> a.exe
+"c": "cd $dir && gcc -I \"C:\\Program Files (x86)\\Microsoft SDKs\\MPI\\Include\" $fileName \"C:\\Program Files (x86)\\Microsoft SDKs\\MPI\\Lib\\x64\\msmpi.lib\"" ,
+"cpp": "cd $dir && g++ -I \"C:\\Program Files (x86)\\Microsoft SDKs\\MPI\\Include\" $fileName \"C:\\Program Files (x86)\\Microsoft SDKs\\MPI\\Lib\\x64\\msmpi.lib\"" ,
+
+----------------------------------------------------------------------------------------------

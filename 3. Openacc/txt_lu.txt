@@ -1,0 +1,42 @@
+void LU_decompose(TYPE a[][N]) {
+
+	#pragma acc parallel loop present(a[0:N][0:N])
+    for (int ii = 0; ii < N; ii++)
+    {
+        #pragma acc loop
+        for (int  jj = 0; jj < ii; jj++) {
+            for (int kk = 0; kk < jj; kk++) {
+                a[ii][jj] -= a[ii][kk] * a[kk][jj];
+            }
+            a[ii][jj] /= a[jj][jj]; ///////////////////////////////////////////////////////////////////////
+        }
+        
+        #pragma acc loop
+        for (int jj = 0; jj < N; jj++) {
+            for (int kk = 0; kk < ii; kk++)
+                a[ii][jj] -= a[ii][kk] * a[kk][jj];
+        }
+    }
+}
+
+void FwdBwdSubstitution(TYPE a[][N], TYPE b[], TYPE x[], TYPE y[]) {
+
+	#pragma acc parallel loop present(a[0:N][0:N], b[0:N], x[0:N], y[0:N])
+    for (int ii = 0; ii < N; ii++) {
+        TYPE w = b[ii];
+        #pragma acc loop reduction(-:w)
+        for (int jj = 0; jj < ii; jj++)
+            w -= a[ii][jj] * y[jj];
+        y[ii] = w / a[ii][ii]; ///////////////////////////////////////////////////////////////////////
+    }
+
+	#pragma acc parallel loop present(a[0:N][0:N], b[0:N], x[0:N], y[0:N])
+    for (int ii = 0; ii < N; ii++) {
+        TYPE w = y[N - ii -1];
+        #pragma acc loop reduction(-:w)
+        for (int jj = 0; jj < N - ii; jj++)
+            w -= a[N - ii -1][jj] * x[jj];
+        TYPE div = a[N - ii - 1][N - ii -1];
+        x[N - ii - 1] = w / div;  /////////////////////////////////////////////////////////////////////
+    }
+}

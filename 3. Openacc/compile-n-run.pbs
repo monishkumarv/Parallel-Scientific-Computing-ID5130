@@ -1,0 +1,27 @@
+#!/bin/bash
+
+module load nvhpc-compiler
+
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./data-constructs.c >output 2>output
+#/sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./vector-addition-monika.c >output 2>output
+#/sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./vector-addition.c >output 2>output
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./tut-11.1.c >output 2>output
+
+/sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./cholesky-parallel.c >output 2>output
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel ./lu-decomposition.c >output 2>output
+
+export PGI_ACC_TIME=1
+echo "10" > input.txt
+echo -e "\n-------------------------- GANGS = 10 ---------------------------------\n" > output
+./a.out input.txt >>output 2>>output
+
+echo "100" > input.txt
+echo -e "\n------------------------- GANGS = 100 ---------------------------------\n" >> output
+./a.out input.txt >>output 2>>output
+
+echo "1000" > input.txt
+echo -e "\n------------------------- GANGS = 1000 --------------------------------\n" >> output
+./a.out input.txt >>output 2>>output
+
+cat output
+rm a.out

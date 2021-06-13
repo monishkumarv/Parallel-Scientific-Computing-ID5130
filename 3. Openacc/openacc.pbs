@@ -1,0 +1,41 @@
+#!/bin/bash
+#PBS -e errorfile.err
+#PBS -o logfile.log
+#PBS -l walltime=01:00:00
+#PBS -l select=1:ngpus=1
+#PBS -q gpuq
+tpdir=`echo $PBS_JOBID | cut -f 1 -d .`
+tempdir=$HOME/scratch/job$tpdir
+mkdir -p $tempdir
+cd $tempdir
+rm output
+
+module load nvhpc-compiler
+
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel $PBS_O_WORKDIR/vector-addition-monika.c >>output 2>>output
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel $PBS_O_WORKDIR/vector-addition.c >>output 2>>output
+
+# export PGI_ACC_TIME=1
+# ./a.out >>output 2>>output
+
+/sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel $PBS_O_WORKDIR/cholesky-parallel.c >>output 2>>output
+# /sware/hpc_sdk/Linux_x86_64/2020/compilers/bin/pgcc -acc -Minfo=accel $PBS_O_WORKDIR/lu-decomposition.c >>output 2>>output
+
+export PGI_ACC_TIME=1
+echo "10" > input.txt
+echo -e "\n-------------------------- GANGS = 10 ---------------------------------\n" >> output
+./a.out input.txt >>output 2>>output
+
+echo "100" > input.txt
+echo -e "\n------------------------- GANGS = 100 ---------------------------------\n" >> output
+./a.out input.txt >>output 2>>output
+
+echo "1000" > input.txt
+echo -e "\n------------------------- GANGS = 1000 --------------------------------\n" >> output
+./a.out input.txt >>output 2>>output
+
+rm a.out
+mv ../job$tpdir $PBS_O_WORKDIR/.
+
+#Check file output in your job folder.
+
